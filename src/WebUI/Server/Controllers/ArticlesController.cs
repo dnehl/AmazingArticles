@@ -1,5 +1,4 @@
-﻿using System;
-using AmazingArticles.Application.Articles.Commands.CreateArticle;
+﻿using AmazingArticles.Application.Articles.Commands.CreateArticle;
 using AmazingArticles.Application.Articles.Commands.DeleteArticle;
 using AmazingArticles.Application.Articles.Commands.UpdateArticle;
 using AmazingArticles.Application.Articles.Commands.UpdateArticleSalesPrice;
@@ -7,6 +6,7 @@ using AmazingArticles.Application.Articles.Queries.GetArticles;
 using AmazingArticles.Application.Articles.Queries.Revenues;
 using AmazingArticles.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +34,14 @@ namespace AmazingArticles.WebUI.Controllers
         [HttpGet("GetDailyRevenue")]
         public async Task<ActionResult<Dictionary<DateTime, double>>> TotalRevenuePerDay([FromQuery] RevenuesPerDayQuery query,
             CancellationToken cancellationToken)
+        {
+            var result = await Mediator.Send(query, cancellationToken).ConfigureAwait(false);
+            return Ok(result);
+        }
+
+        [HttpGet("TotalRevenuePerArticleNumber")]
+        public async Task<ActionResult<Dictionary<string, double>>> TotalRevenuePerArticleNumber(
+            [FromQuery] RevenuesPerArticlesQuery query, CancellationToken cancellationToken)
         {
             var result = await Mediator.Send(query, cancellationToken).ConfigureAwait(false);
             return Ok(result);
