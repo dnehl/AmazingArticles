@@ -1,0 +1,47 @@
+﻿@page "/articles"
+@using AmazingArticles.Domain.Entities
+@inject HttpClient Http
+
+<h1>Amazing articles</h1>
+
+<p>Hello and welcome to the amazing articles service powered by Dominik Nehl.</p>
+<p>You can play around with the Sites, which are presented in the Nav-bar <br/> or if you are a real pro you can also try the awesome swagger UI (<a href="https://localhost:44300/swagger" target="_blank" class="ml-md-auto">Swagger</a>)).</p>
+
+@if (_articles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Article number</th>
+                <th>Sales Price (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in _articles)
+            {
+                <tr>
+                    <td>@article.Created.ToShortDateString()</td>
+                    <td>@article.ArticleNumber</td>
+                    <td>@article.SalesPrice</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-info">Add</button>
+}
+
+@code {
+    private Article[] _articles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var t = await Http.GetFromJsonAsync<Article[]>("https://localhost:44300/api/Articles");
+        _articles = t;
+    }
+
+}

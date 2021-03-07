@@ -1,0 +1,42 @@
+﻿@page "/revenuePerDay"
+@using AmazingArticles.Domain.Entities
+@inject HttpClient Http
+
+<h1>Revenues per day</h1>
+
+<p>This page shows all revenues per day.</p>
+
+@if (_articles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Revenue (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in _articles)
+            {
+                <tr>
+                    <td>@article.Key.ToShortDateString()</td>
+                    <td>@article.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Dictionary<DateTime, double> _articles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _articles = await Http.GetFromJsonAsync<Dictionary<DateTime, double>>("https://localhost:44319/api/GetDailyRevenue");
+    }
+
+}
