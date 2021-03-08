@@ -2,15 +2,19 @@ using AmazingArticles.Application;
 using AmazingArticles.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
-namespace WebUI.Client.Server
+namespace WebUI.Server
 {
     public class Startup
     {
@@ -19,26 +23,26 @@ namespace WebUI.Client.Server
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public IConfiguration Configuration { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration);
 
             services.AddControllersWithViews();
-            //services.AddRazorPages();
+            services.AddRazorPages();
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new OpenApiInfo {Title = "Amazing Articles", Version = "1.0"});
+                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Amazing Articles", Version = "1.0" });
 
                 // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                x.IncludeXmlComments(xmlPath);
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                //x.IncludeXmlComments(xmlPath);
             });
         }
 
@@ -67,9 +71,8 @@ namespace WebUI.Client.Server
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                //endpoints.MapFallbackToFile("index.html");
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }

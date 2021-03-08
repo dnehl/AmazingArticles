@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "cosmosdb1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.DocumentDB/databaseAccounts/amazingarticles",
+      "type": "cosmosdb.azure",
+      "connectionId": "mongodb://amazingarticles:PSPeF0Bvt4MU2DBBZqbtbIfSZ6IGimi2FRWPx3h4pNkdnMuOF5LxM3Yi5thLrjMaY4d6pS4LUxZtshtVcL8ciQ==@amazingarticles.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@amazingarticles@",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}

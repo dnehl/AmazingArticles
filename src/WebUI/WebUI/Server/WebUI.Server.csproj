@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>923327b1-2d77-4054-b391-d721b3f99166</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.6.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Application\Application.csproj" />
+    <ProjectReference Include="..\..\..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Client\WebUI.Client.csproj" />
+  </ItemGroup>
+
+
+</Project>

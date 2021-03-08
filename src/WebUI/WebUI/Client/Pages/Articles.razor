@@ -1,0 +1,119 @@
+﻿@page "/"
+@using AmazingArticles.Domain.Entities
+@using Newtonsoft.Json
+@using WebUI.Client.Models
+@using System.Text
+@using System.Threading
+@using AmazingArticles.Application.Articles.Commands.DeleteArticle
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime;
+
+<h1>Amazing articles</h1>
+
+<p>Hello and welcome to the amazing articles service powered by Dominik Nehl.</p>
+<p>You can play around with the Sites, which are presented in the Nav-bar <br /> or if you are a real pro you can also try the awesome swagger UI (<a href="@_swaggerUrl" target="_blank" class="ml-md-auto">Swagger</a>)).</p>
+
+@if (_articles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Article number</th>
+                <th>Sales Price (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in _articles)
+            {
+                <tr>
+                    <td>@article.Created.ToShortDateString()</td>
+                    <td>@article.ArticleNumber</td>
+                    <td>@article.SalesPrice €</td>
+                    <td><button type="button" class="btn btn-danger" @onclick="() => DeleteItem(article.Id, article.ArticleNumber)">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <EditForm Model="@_article" OnSubmit="@(async  (e) => await AddArticle(e))">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label for="articleNumber">Article number</label>
+            <InputText @bind-Value=@_article.ArticleNumber class="form-control" id="articleNumber" />
+            <ValidationMessage For="() => _article.ArticleNumber" />
+        </div>
+        <div class="form-group">
+            <label for="salesPrice">Sales price (€)</label>
+            <InputNumber @bind-Value=@_article.SalesPrice class="form-control" id="salesPrice" />
+            <ValidationMessage For=@(() => _article.SalesPrice) />
+        </div>
+        <input type="submit" class="btn btn-primary" value="Save" />
+    </EditForm>
+
+}
+
+@code {
+    private string _swaggerUrl;
+    private List<Article> _articles;
+    private readonly ArticleModel _article = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var baseAddress = Http.BaseAddress;
+        _swaggerUrl = $"{baseAddress}swagger";
+        await ReloadList();
+    }
+
+
+    protected async Task DeleteItem(Guid id, string articleNumber)
+    {
+        var confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+
+        if (!confirm)
+            return;
+
+
+        var command = new DeleteArticleCommand { Id = id };
+        var request = new HttpRequestMessage(HttpMethod.Delete, "api/Articles")
+        {
+
+            Content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json")
+        };
+        await Http.SendAsync(request);
+
+        var item = _articles.FirstOrDefault(x => x.Id.Equals(id));
+
+        if (item != null)
+            _articles.Remove(item);
+
+    }
+
+    private async Task AddArticle(EditContext context)
+    {
+        var formIsValid = context.Validate();
+
+        if (!formIsValid)
+            return;
+
+        await Http.PostAsJsonAsync("api/Articles", _article);
+        _article.ArticleNumber = string.Empty;
+        _article.SalesPrice = 0;
+        await ReloadList();
+    }
+
+    private async Task ReloadList()
+    {
+        _articles = new List<Article>();
+        var newList = await Http.GetFromJsonAsync<List<Article>>("api/Articles");
+
+        _articles = newList;
+    }
+
+}

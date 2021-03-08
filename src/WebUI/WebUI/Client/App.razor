@@ -1,0 +1,10 @@
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(WebUI.Client.Shared.MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(WebUI.Client.Shared.MainLayout)">
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>

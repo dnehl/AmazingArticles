@@ -2,15 +2,15 @@ using AmazingArticles.Application;
 using AmazingArticles.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System;
-using System.IO;
-using System.Reflection;
+using System.Linq;
 
-namespace WebUI.Client.Server
+namespace WebUI.Server
 {
     public class Startup
     {
@@ -29,16 +29,16 @@ namespace WebUI.Client.Server
             services.AddInfrastructure(Configuration);
 
             services.AddControllersWithViews();
-            //services.AddRazorPages();
+            services.AddRazorPages();
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new OpenApiInfo {Title = "Amazing Articles", Version = "1.0"});
+                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Amazing Articles", Version = "1.0" });
 
                 // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                x.IncludeXmlComments(xmlPath);
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                //x.IncludeXmlComments(xmlPath);
             });
         }
 
@@ -67,9 +67,9 @@ namespace WebUI.Client.Server
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapRazorPages();
+                endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                //endpoints.MapFallbackToFile("index.html");
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }
