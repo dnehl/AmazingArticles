@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
+#pragma warning disable 1591
 
 namespace AmazingArticles.WebUI.Filters
 {

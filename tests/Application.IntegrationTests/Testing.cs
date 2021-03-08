@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
-using Respawn;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +21,6 @@ namespace AmazingArticles.Application.IntegrationTests
     {
         private static IConfigurationRoot _configuration;
         private static IServiceScopeFactory _scopeFactory;
-        private static Checkpoint _checkpoint;
         private static Mock<IApplicationRepository<Article>> _repositoryMock;
         private static List<Article> _articles;
         [OneTimeSetUp]
@@ -45,7 +43,7 @@ namespace AmazingArticles.Application.IntegrationTests
             services.AddLogging();
 
             startup.ConfigureServices(services);
-            services.AddSingleton<IApplicationRepository<Article>>(x => _repositoryMock.Object);
+            services.AddSingleton(_ => _repositoryMock.Object);
 
 
             // Register testing version
@@ -64,7 +62,7 @@ namespace AmazingArticles.Application.IntegrationTests
             _repositoryMock.Setup(x => x.GetAll(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_articles);
             _repositoryMock.Setup(x => x.Add(It.IsAny<Article>(), It.IsAny<CancellationToken>()))
-                .Returns<Article, CancellationToken>((a, c) =>
+                .Returns<Article, CancellationToken>((a, _) =>
                 {
                     a.Id = Guid.NewGuid();
                     _articles.Add(a);
@@ -72,7 +70,7 @@ namespace AmazingArticles.Application.IntegrationTests
                 });
 
             _repositoryMock.Setup(x => x.Delete(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .Callback<Guid, CancellationToken>((g, c) =>
+                .Callback<Guid, CancellationToken>((g, _) =>
                 {
                     var item = _articles.FirstOrDefault(x => x.Id.Equals(g));
 
@@ -81,14 +79,14 @@ namespace AmazingArticles.Application.IntegrationTests
                 });
 
             _repositoryMock.Setup(x => x.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .Returns<Guid, CancellationToken>((g, c) =>
+                .Returns<Guid, CancellationToken>((g, _) =>
                 {
                     var item = _articles.FirstOrDefault(x => x.Id.Equals(g));
                     return Task.FromResult(item);
                 });
 
             _repositoryMock.Setup(x => x.Update(It.IsAny<Guid>(), It.IsAny<Article>(), It.IsAny<CancellationToken>()))
-                .Returns<Guid, Article, CancellationToken>((g,a, c) =>
+                .Returns<Guid, Article, CancellationToken>((g,a, _) =>
                 {
                     var item = _articles.FirstOrDefault(x => x.Id.Equals(g));
 

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AmazingArticles.WebUI.Controllers
 {
+    /// <inheritdoc />
     [ApiController]
     [Route("api/[controller]")]
     public abstract class ApiControllerBase : ControllerBase
