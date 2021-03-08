@@ -16,7 +16,7 @@ namespace AmazingArticles.Application.Articles.Commands.DeleteArticle
 
     public class DeleteArticleCommandHandler : IRequestHandler<DeleteArticleCommand>
     {
-        private IApplicationRepository<Article> _repository;
+        private readonly IApplicationRepository<Article> _repository;
 
         public DeleteArticleCommandHandler(IApplicationRepository<Article> repository)
         {

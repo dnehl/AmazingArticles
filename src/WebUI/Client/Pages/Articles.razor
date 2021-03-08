@@ -1,11 +1,16 @@
-﻿@page "/articles"
+﻿@page "/"
 @using AmazingArticles.Domain.Entities
+@using AmazingArticles.Application.Articles.Commands.CreateArticle
+@using Newtonsoft.Json
+@using WebUI.Client.Models
+@using System.Text
+@using AmazingArticles.Application.Articles.Commands.DeleteArticle
 @inject HttpClient Http
 
 <h1>Amazing articles</h1>
 
 <p>Hello and welcome to the amazing articles service powered by Dominik Nehl.</p>
-<p>You can play around with the Sites, which are presented in the Nav-bar <br/> or if you are a real pro you can also try the awesome swagger UI (<a href="https://localhost:44300/swagger" target="_blank" class="ml-md-auto">Swagger</a>)).</p>
+<p>You can play around with the Sites, which are presented in the Nav-bar <br /> or if you are a real pro you can also try the awesome swagger UI (<a href="https://localhost:44300/swagger" target="_blank" class="ml-md-auto">Swagger</a>)).</p>
 
 @if (_articles == null)
 {
@@ -15,33 +20,89 @@ else
 {
     <table class="table">
         <thead>
-            <tr>
-                <th>Date</th>
-                <th>Article number</th>
-                <th>Sales Price (€)</th>
-            </tr>
+        <tr>
+            <th>Date</th>
+            <th>Article number</th>
+            <th>Sales Price (€)</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var article in _articles)
-            {
-                <tr>
-                    <td>@article.Created.ToShortDateString()</td>
-                    <td>@article.ArticleNumber</td>
-                    <td>@article.SalesPrice</td>
-                </tr>
-            }
+        @foreach (var article in _articles)
+        {
+            <tr>
+                <td>@article.Created.ToShortDateString()</td>
+                <td>@article.ArticleNumber</td>
+                <td>@article.SalesPrice €</td>
+                <td><button type="button" class="btn btn-danger" @onclick="() => DeleteClicked(article.Id)">Delete</button></td>
+            </tr>
+        }
         </tbody>
     </table>
-    <button type="button" class="btn btn-info">Add</button>
+
+    <EditForm Model="@_article" OnSubmit="@(async  (e) => await AddArticle(e))">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label for="articleNumber">Article number</label>
+            <InputText @bind-Value=@_article.ArticleNumber class="form-control" id="articleNumber" />
+            <ValidationMessage For="() => _article.ArticleNumber"/>
+        </div>
+        <div class="form-group">
+            <label for="salesPrice">Sales price (€)</label>
+            <InputNumber @bind-Value=@_article.SalesPrice class="form-control" id="salesPrice" />
+            <ValidationMessage For=@(() => _article.SalesPrice) />
+        </div>
+        <input type="submit" class="btn btn-primary" value="Save" />
+    </EditForm>
+    
 }
 
 @code {
-    private Article[] _articles;
+    private List<Article> _articles;
+    private ArticleModel _article = new ();
+
 
     protected override async Task OnInitializedAsync()
     {
-        var t = await Http.GetFromJsonAsync<Article[]>("https://localhost:44300/api/Articles");
-        _articles = t;
+        await ReloadList();
+    }
+
+    private void DeleteClicked(Guid id)
+    {
+        DeleteItem(id).Wait(5000);
+    }
+    protected async Task DeleteItem(Guid id)
+    {
+        var command = new DeleteArticleCommand {Id = id};
+        var request = new HttpRequestMessage(HttpMethod.Delete, "api/Articles")
+        {
+
+            Content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json")
+        };
+        await Http.SendAsync(request);
+        await ReloadList();
+
+    }
+
+    private async Task AddArticle(EditContext context)
+    {
+        var formIsValid = context.Validate();
+
+        if (!formIsValid)
+            return;
+
+        await Http.PostAsJsonAsync("api/Articles", _article);
+        _article.ArticleNumber = string.Empty;
+        _article.SalesPrice = 0;
+        await ReloadList();
+    }
+
+    private async Task ReloadList()
+    {
+        _articles = new List<Article>();
+        var newList = await Http.GetFromJsonAsync<List<Article>>("api/Articles");
+
+        _articles = newList;
     }
 
 }

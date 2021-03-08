@@ -36,7 +36,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _articles = await Http.GetFromJsonAsync<Dictionary<DateTime, double>>("https://localhost:44300/api/Articles/GetDailyRevenue");
+        _articles = await Http.GetFromJsonAsync<Dictionary<DateTime, double>>("/api/Articles/GetDailyRevenue");
     }
 
 }

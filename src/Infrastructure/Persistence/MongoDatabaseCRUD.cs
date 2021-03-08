@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,10 +15,13 @@ namespace AmazingArticles.Infrastructure.Persistence
 
         public MongoDatabaseCRUD(IDatabaseSettings databaseSettings)
         {
-            //var mongoSettings = MongoClientSettings.FromUrl(new MongoUrl(""));
-            //mongoSettings.SslSettings = new SslSettings{EnabledSslProtocols = SslProtocols.Tls12};
-            var client = new MongoClient();
-            _database = client.GetDatabase("ArticlesStore");
+            var settings = MongoClientSettings.FromUrl(
+                new MongoUrl(databaseSettings.ConnectionString)
+            );
+            settings.SslSettings =
+                new SslSettings { EnabledSslProtocols = SslProtocols.Tls12 };
+            var mongoClient = new MongoClient(settings);
+            _database = mongoClient.GetDatabase(databaseSettings.DatabaseName);
         }
 
         public async Task InsertRecord<T>(string tableName, T record, CancellationToken cancellationToken)

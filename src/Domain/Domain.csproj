@@ -6,8 +6,4 @@
     <AssemblyName>AmazingArticles.Domain</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="ValueObjects\" />
-  </ItemGroup>
-
 </Project>

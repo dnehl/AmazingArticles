@@ -9,6 +9,10 @@ namespace AmazingArticles.Application.Articles.Commands.UpdateArticle
             RuleFor(v => v.ArticleNumber)
                 .MaximumLength(32)
                 .NotEmpty();
+
+            RuleFor(v => v.SalesPrice)
+                .GreaterThan(0)
+                .WithMessage("Sales Price must be greater than 0");
         }
     }
 }
