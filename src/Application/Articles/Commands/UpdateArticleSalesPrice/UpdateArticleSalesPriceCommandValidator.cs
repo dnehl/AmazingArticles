@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace AmazingArticles.Application.Articles.Commands.UpdateArticleSalesPrice
 {
-    public class UpdateArticleSalesPriceCommandValidator : AbstractValidator<UpdateArticleCommand>
+    public class UpdateArticleSalesPriceCommandValidator : AbstractValidator<UpdateArticleSalesPriceCommand>
     {
         public UpdateArticleSalesPriceCommandValidator()
         {
