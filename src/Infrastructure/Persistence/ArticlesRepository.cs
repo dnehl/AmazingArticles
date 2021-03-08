@@ -15,13 +15,14 @@ namespace AmazingArticles.Infrastructure.Persistence
         private readonly string _tableName;
 
         public ArticlesRepository(
+            IDatabaseSettings databaseSettings,
             MongoDatabaseCRUD database, 
             IDateTime dataTime)
         {
             // configure database fields for articles
             ArticleConfiguration.Configure();
-
-            _tableName = "Articles";
+            
+            _tableName = databaseSettings.TableName;
             _database = database;
             _dataTime = dataTime;
         }

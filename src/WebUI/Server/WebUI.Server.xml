@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebUI.Server</name>
+    </assembly>
+    <members>
+        <member name="M:AmazingArticles.WebUI.Controllers.ArticlesController.GetArticles(AmazingArticles.Application.Articles.Queries.GetArticles.GetArticlesQuery,System.Threading.CancellationToken)">
+            <summary>
+                Gets all articles
+            </summary>
+            <param name="query">Query request to receive articles </param>
+            <param name="cancellationToken">Token to cancel operation</param>
+            <returns>a list of articles</returns>
+            <response code="200">Response is ok</response>
+            <response code="404">No items available</response>
+            <response code="400">Something unexpected went wrong</response>
+        </member>
+    </members>
+</doc>

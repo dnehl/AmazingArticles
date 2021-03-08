@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace WebUI.Client.Server
 {
@@ -31,6 +34,11 @@ namespace WebUI.Client.Server
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo {Title = "Amazing Articles", Version = "1.0"});
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                x.IncludeXmlComments(xmlPath);
             });
         }
 

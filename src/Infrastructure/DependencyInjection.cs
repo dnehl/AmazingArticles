@@ -20,7 +20,6 @@ namespace AmazingArticles.Infrastructure
 
             services.AddSingleton<MongoDatabaseCRUD>();
             services.AddSingleton<IApplicationRepository<Article>, ArticlesRepository>();
-            services.AddScoped<IDomainEventService, DomainEventService>();
             services.AddTransient<IDateTime, DateTimeService>();
             return services;
         }

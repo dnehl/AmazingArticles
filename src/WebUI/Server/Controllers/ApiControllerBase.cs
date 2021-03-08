@@ -41,7 +41,7 @@ namespace AmazingArticles.WebUI.Controllers
             }
         }
 
-        protected async Task<ActionResult> HandleCommandWithOk<T>(IRequest<T> command, CancellationToken cancellationToken)
+        protected async Task<ActionResult> HandleCommandWithOkResponse<T>(IRequest<T> command, CancellationToken cancellationToken)
         {
             try
             {

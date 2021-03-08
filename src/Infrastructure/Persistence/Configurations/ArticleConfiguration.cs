@@ -1,5 +1,4 @@
 ﻿using AmazingArticles.Domain.Entities;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
 
@@ -13,7 +12,7 @@ namespace AmazingArticles.Infrastructure.Persistence.Configurations
             {
                 a.MapIdProperty(x => x.Id).SetIdGenerator(new GuidGenerator());
                 a.MapProperty(x => x.ArticleNumber).SetElementName("ArticleNumber");
-                a.MapProperty(x => x.SalesPrice).SetElementName("Foo");
+                a.MapProperty(x => x.SalesPrice).SetElementName("SalesPrice");
             });
         }
     }

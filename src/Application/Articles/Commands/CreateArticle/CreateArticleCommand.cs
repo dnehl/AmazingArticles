@@ -1,6 +1,5 @@
 ﻿using AmazingArticles.Application.Common.Interfaces;
 using AmazingArticles.Domain.Entities;
-using AmazingArticles.Domain.Events;
 using MediatR;
 using System;
 using System.Threading;
@@ -30,9 +29,6 @@ namespace AmazingArticles.Application.Articles.Commands.CreateArticle
                 ArticleNumber = request.ArticleNumber,
                 SalesPrice = request.SalesPrice
             };
-
-            entity.DomainEvents.Add(new ArticleCreatedEvent(entity));
-
             await _repository.Add(entity, cancellationToken).ConfigureAwait(false);
             return entity.Id;
         }
