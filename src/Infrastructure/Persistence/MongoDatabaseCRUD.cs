@@ -15,6 +15,13 @@ namespace AmazingArticles.Infrastructure.Persistence
 
         public MongoDatabaseCRUD(IDatabaseSettings databaseSettings)
         {
+            if (string.IsNullOrEmpty(databaseSettings.ConnectionString))
+            {
+                var client = new MongoClient();
+                _database = client.GetDatabase(databaseSettings.DatabaseName);
+                return;
+            }
+            
             var settings = MongoClientSettings.FromUrl(
                 new MongoUrl(databaseSettings.ConnectionString)
             );

@@ -1,11 +1,12 @@
 ﻿@page "/"
 @using AmazingArticles.Domain.Entities
-@using AmazingArticles.Application.Articles.Commands.CreateArticle
 @using Newtonsoft.Json
 @using WebUI.Client.Models
 @using System.Text
+@using System.Threading
 @using AmazingArticles.Application.Articles.Commands.DeleteArticle
 @inject HttpClient Http
+@inject IJSRuntime JsRuntime;
 
 <h1>Amazing articles</h1>
 
@@ -20,22 +21,22 @@ else
 {
     <table class="table">
         <thead>
-        <tr>
-            <th>Date</th>
-            <th>Article number</th>
-            <th>Sales Price (€)</th>
-        </tr>
+            <tr>
+                <th>Date</th>
+                <th>Article number</th>
+                <th>Sales Price (€)</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var article in _articles)
-        {
-            <tr>
-                <td>@article.Created.ToShortDateString()</td>
-                <td>@article.ArticleNumber</td>
-                <td>@article.SalesPrice €</td>
-                <td><button type="button" class="btn btn-danger" @onclick="() => DeleteClicked(article.Id)">Delete</button></td>
-            </tr>
-        }
+            @foreach (var article in _articles)
+            {
+                <tr>
+                    <td>@article.Created.ToShortDateString()</td>
+                    <td>@article.ArticleNumber</td>
+                    <td>@article.SalesPrice €</td>
+                    <td><button type="button" class="btn btn-danger" @onclick="() => DeleteItem(article.Id, article.ArticleNumber)">Delete</button></td>
+                </tr>
+            }
         </tbody>
     </table>
 
@@ -45,7 +46,7 @@ else
         <div class="form-group">
             <label for="articleNumber">Article number</label>
             <InputText @bind-Value=@_article.ArticleNumber class="form-control" id="articleNumber" />
-            <ValidationMessage For="() => _article.ArticleNumber"/>
+            <ValidationMessage For="() => _article.ArticleNumber" />
         </div>
         <div class="form-group">
             <label for="salesPrice">Sales price (€)</label>
@@ -54,36 +55,43 @@ else
         </div>
         <input type="submit" class="btn btn-primary" value="Save" />
     </EditForm>
-    
+
 }
 
 @code {
     private string _swaggerUrl;
     private List<Article> _articles;
-    private ArticleModel _article = new ();
+    private readonly ArticleModel _article = new();
 
 
     protected override async Task OnInitializedAsync()
     {
         var baseAddress = Http.BaseAddress;
-        _swaggerUrl = $"{Http.BaseAddress}swagger";
+        _swaggerUrl = $"{baseAddress}swagger";
         await ReloadList();
     }
 
-    private void DeleteClicked(Guid id)
+
+    protected async Task DeleteItem(Guid id, string articleNumber)
     {
-        DeleteItem(id).Wait(5000);
-    }
-    protected async Task DeleteItem(Guid id)
-    {
-        var command = new DeleteArticleCommand {Id = id};
+        var confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+
+        if (!confirm)
+            return;
+
+
+        var command = new DeleteArticleCommand { Id = id };
         var request = new HttpRequestMessage(HttpMethod.Delete, "api/Articles")
         {
 
             Content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json")
         };
         await Http.SendAsync(request);
-        await ReloadList();
+
+        var item = _articles.FirstOrDefault(x => x.Id.Equals(id));
+
+        if (item != null)
+            _articles.Remove(item);
 
     }
 
