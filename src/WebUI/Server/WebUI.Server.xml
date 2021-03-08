@@ -4,6 +4,9 @@
         <name>WebUI.Server</name>
     </assembly>
     <members>
+        <member name="T:AmazingArticles.WebUI.Controllers.ApiControllerBase">
+            <inheritdoc />
+        </member>
         <member name="T:AmazingArticles.WebUI.Controllers.ArticlesController">
             <summary>
                 Controller to get information about articles,

@@ -28,7 +28,8 @@ namespace AmazingArticles.Application.IntegrationTests.Articles.Commands
             var command = new UpdateArticleCommand
             {
                 ArticleNumber = "Foo",
-                Id = Guid.Empty
+                Id = Guid.Empty,
+                SalesPrice = 50
             };
 
             FluentActions.Invoking(() =>
@@ -53,7 +54,8 @@ namespace AmazingArticles.Application.IntegrationTests.Articles.Commands
             var deleteCommand = new UpdateArticleCommand
             {
                 Id = item.Id,
-                ArticleNumber = "Foo²"
+                ArticleNumber = "Foo²",
+                SalesPrice = item.SalesPrice
                 
             };
 
