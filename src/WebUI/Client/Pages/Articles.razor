@@ -10,7 +10,7 @@
 <h1>Amazing articles</h1>
 
 <p>Hello and welcome to the amazing articles service powered by Dominik Nehl.</p>
-<p>You can play around with the Sites, which are presented in the Nav-bar <br /> or if you are a real pro you can also try the awesome swagger UI (<a href="https://localhost:44300/swagger" target="_blank" class="ml-md-auto">Swagger</a>)).</p>
+<p>You can play around with the Sites, which are presented in the Nav-bar <br /> or if you are a real pro you can also try the awesome swagger UI (<a href="@_swaggerUrl" target="_blank" class="ml-md-auto">Swagger</a>)).</p>
 
 @if (_articles == null)
 {
@@ -58,12 +58,15 @@ else
 }
 
 @code {
+    private string _swaggerUrl;
     private List<Article> _articles;
     private ArticleModel _article = new ();
 
 
     protected override async Task OnInitializedAsync()
     {
+        var baseAddress = Http.BaseAddress;
+        _swaggerUrl = $"{Http.BaseAddress}swagger";
         await ReloadList();
     }
 

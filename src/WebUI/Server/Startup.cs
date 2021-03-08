@@ -41,9 +41,6 @@ namespace WebUI.Client.Server
             {
                 app.UseDeveloperExceptionPage();
                 app.UseWebAssemblyDebugging();
-
-                app.UseSwagger();
-                app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "Amazing articles v1"));
             }
             else
             {
@@ -51,6 +48,8 @@ namespace WebUI.Client.Server
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseSwagger();
+            app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "Amazing articles v1"));
 
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
