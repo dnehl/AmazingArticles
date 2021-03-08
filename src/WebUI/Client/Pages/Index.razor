@@ -1,7 +1,53 @@
 ﻿@page "/"
+@using ChartJs.Blazor.PieChart
+@using ChartJs.Blazor.Util
+@using ChartJs.Blazor.Common
+@using AmazingArticles.Domain.Entities
+@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.Common.Enums
+@using System.Drawing
+@using ChartJs.Blazor.BarChart.Axes
+@using ChartJs.Blazor.Common.Axes
 
-<h1>Hello, world!</h1>
+@inject HttpClient Http
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<h1>Hello and welcome to the amazing articles store</h1>
+
+<Chart Config="_config" @ref="_chart"></Chart>
+
+@code
+{
+    private Chart _chart = new Chart();
+    private BarConfig _config;
+    private Article[] _articles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _articles = await Http.GetFromJsonAsync<Article[]>("https://localhost:44300/api/Articles");
+    }
+
+
+    protected override void OnInitialized()
+    {
+        //if (_articles == null)
+        //    return;
+
+        _config = new BarConfig( true)
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Legend = new Legend
+                {
+                    Position = Position.Right
+                },
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "ChartJs.Blazor Horizontal Bar Chart"
+                }
+            }
+        };
+    }
+}

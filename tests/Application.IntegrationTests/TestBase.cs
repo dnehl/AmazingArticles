@@ -8,6 +8,7 @@ namespace AmazingArticles.Application.IntegrationTests
         [SetUp]
         public async Task TestSetUp()
         {
+            await Testing.ResetState();
         }
     }
 }
