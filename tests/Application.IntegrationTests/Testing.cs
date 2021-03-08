@@ -12,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WebUI.Client.Server;
+using WebUI.Server;
 
 namespace AmazingArticles.Application.IntegrationTests
 {
