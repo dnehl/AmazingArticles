@@ -11,6 +11,7 @@ This solution uses the architecture approach of Jason Taylor (https://github.com
 - NUnit 
 - FluentAssertions 
 - Moq 
+- MongoDb 
 
 # Website
 if you want to play around you can go to https://amazingarticles.azurewebsites.net/
