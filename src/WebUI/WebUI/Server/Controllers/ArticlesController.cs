@@ -2,6 +2,7 @@
 using AmazingArticles.Application.Articles.Commands.DeleteArticle;
 using AmazingArticles.Application.Articles.Commands.UpdateArticle;
 using AmazingArticles.Application.Articles.Commands.UpdateArticleSalesPrice;
+using AmazingArticles.Application.Articles.Commands.UpdateArticleSold;
 using AmazingArticles.Application.Articles.Queries.GetArticles;
 using AmazingArticles.Application.Articles.Queries.Revenues;
 using AmazingArticles.Application.Common.Exceptions;
@@ -84,7 +85,7 @@ namespace AmazingArticles.WebUI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Dictionary<DateTime, int>>> GetArticlesPerDay(
-            [FromQuery] AddedArticlesPerDayCountQuery countQuery, CancellationToken cancellationToken)
+            [FromQuery] SoldArticlesPerDayCountQuery countQuery, CancellationToken cancellationToken)
         {
             return await HandleQuery(countQuery, cancellationToken).ConfigureAwait(false);
         }
@@ -225,6 +226,52 @@ namespace AmazingArticles.WebUI.Controllers
             CancellationToken cancellationToken)
         {
             return await HandleCommandWithOkResponse(command, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Sets an article as sold.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PATCH /SellArticle
+        ///     {
+        ///        "Id": "550d5d27-ebc2-42fc-bb59-99b10f287256",
+        ///     }
+        /// 
+        /// </remarks>
+        /// <param name="command">command request to update an article</param>
+        /// <param name="cancellationToken">Token to cancel operation</param>
+        /// <response code="400">Something unexpected went wrong, or the validation was not correct</response>
+        /// <response code="200">Response is ok</response>
+        /// <response code="404">Data not available</response>
+        [HttpPatch("SellArticle")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Article>> SellArticle(UpdateArticleSoldCommand command,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await Mediator.Send(command, cancellationToken).ConfigureAwait(false);
+                return Ok(result);
+            }
+            catch (NotFoundException exception)
+            {
+                Log(LogLevel.Debug, exception.Message);
+                return NotFound(exception.Message);
+            }
+            catch (ValidationException exception)
+            {
+                Log(LogLevel.Debug, exception.Message);
+                return ValidationProblem(new ValidationProblemDetails(exception.Errors));
+            }
+            catch (Exception exception)
+            {
+                Log(LogLevel.Debug, exception.Message);
+                return BadRequest(exception.Message);
+            }
         }
 
         /// <summary>

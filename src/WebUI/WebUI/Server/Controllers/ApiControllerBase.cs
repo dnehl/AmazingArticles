@@ -2,10 +2,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace AmazingArticles.WebUI.Controllers
 {
@@ -18,7 +18,7 @@ namespace AmazingArticles.WebUI.Controllers
 
         protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetService<ISender>();
 
-        protected abstract void Log(Microsoft.Extensions.Logging.LogLevel logLevel, string message);
+        protected abstract void Log(LogLevel logLevel, string message);
 
 
         protected async Task<ActionResult<T>> HandleQuery<T>(IRequest<T> query, CancellationToken cancellationToken) 

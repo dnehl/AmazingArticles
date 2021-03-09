@@ -1,5 +1,4 @@
-﻿using AmazingArticles.Application.Articles.Commands.UpdateArticle;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace AmazingArticles.Application.Articles.Commands.UpdateArticleSalesPrice
 {

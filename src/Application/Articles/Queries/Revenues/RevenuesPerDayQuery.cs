@@ -5,6 +5,7 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,18 +31,19 @@ namespace AmazingArticles.Application.Articles.Queries.Revenues
             if (articles == null)
                 throw new NotFoundException(nameof(Article));
             return articles
+                .Where(x => x.Sold && x.SoldAt.HasValue)
                 .GroupBy(x => new
                 {
-                    Year = x.Created.Year,
-                    Month = x.Created.Month,
-                    Day = x.Created.Day
+                    x.SoldAt.Value.Year,
+                    x.SoldAt.Value.Month,
+                    x.SoldAt.Value.Day
                 })
                 .Select(x => new
                 {
                     TotalRevenue = x.Sum(x => x.SalesPrice),
-                    Year = x.Key.Year,
-                    Month = x.Key.Month,
-                    Day = x.Key.Day
+                    x.Key.Year,
+                    x.Key.Month,
+                    x.Key.Day
                 })
                 .ToDictionary(article => new DateTime(article.Year, article.Month, article.Day),
                     article => article.TotalRevenue);

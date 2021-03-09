@@ -60,7 +60,7 @@ namespace AmazingArticles.Application.IntegrationTests
 
             _repositoryMock = new Mock<IApplicationRepository<Article>>();
             _repositoryMock.Setup(x => x.GetAll(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_articles);
+                .ReturnsAsync(() => { return _articles; });
             _repositoryMock.Setup(x => x.Add(It.IsAny<Article>(), It.IsAny<CancellationToken>()))
                 .Returns<Article, CancellationToken>((a, _) =>
                 {

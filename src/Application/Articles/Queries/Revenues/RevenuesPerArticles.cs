@@ -29,14 +29,15 @@ namespace AmazingArticles.Application.Articles.Queries.Revenues
             if (articles == null)
                 throw new NotFoundException(nameof(Article));
             return articles
+                .Where(x => x.Sold)
                 .GroupBy(x => new
                 {
-                    ArticleNumber = x.ArticleNumber
+                    x.ArticleNumber
                 })
                 .Select(x => new
                 {
                     TotalRevenue = x.Sum(x => x.SalesPrice),
-                    ArticleNumber = x.Key.ArticleNumber
+                    x.Key.ArticleNumber
                 })
                 .ToDictionary(article => article.ArticleNumber,
                     article => article.TotalRevenue);

@@ -5,6 +5,7 @@
 @using System.Text
 @using System.Threading
 @using AmazingArticles.Application.Articles.Commands.DeleteArticle
+@using AmazingArticles.Application.Articles.Commands.UpdateArticleSold
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime;
 
@@ -30,12 +31,17 @@ else
         <tbody>
             @foreach (var article in _articles)
             {
-                <tr>
-                    <td>@article.Created.ToShortDateString()</td>
-                    <td>@article.ArticleNumber</td>
-                    <td>@article.SalesPrice €</td>
-                    <td><button type="button" class="btn btn-danger" @onclick="() => DeleteItem(article.Id, article.ArticleNumber)">Delete</button></td>
-                </tr>
+            <tr>
+                <td>@article.Created.ToShortDateString()</td>
+                <td>@article.ArticleNumber</td>
+                <td>@article.SalesPrice €</td>
+
+                @if (!article.Sold)
+                {
+                    <td><button type="button" class="btn btn-info" @onclick="() => SellArticle(article.Id, article.ArticleNumber)">Sell</button></td>
+                }
+                <td><button type="button" class="btn btn-danger" @onclick="() => DeleteItem(article.Id, article.ArticleNumber)">Delete</button></td>
+            </tr>
             }
         </tbody>
     </table>
@@ -62,6 +68,7 @@ else
     private string _swaggerUrl;
     private List<Article> _articles;
     private readonly ArticleModel _article = new();
+    private bool _isBusy;
 
 
     protected override async Task OnInitializedAsync()
@@ -95,17 +102,43 @@ else
 
     }
 
+    private async Task SellArticle(Guid id, string articleNumber)
+    {
+        var command = new UpdateArticleSoldCommand {Id = id};
+        var request = new HttpRequestMessage(HttpMethod.Patch, "api/Articles/SellArticle")
+        {
+            Content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json")
+        };
+
+        var response = await Http.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode || response.Content == null)
+            return;
+
+        var article = _articles.FirstOrDefault(x => x.Id.Equals(id));
+
+        if (article == null)
+            return;
+
+        article.Sold = true;
+        _articles[_articles.IndexOf(article)] = article;
+
+    }
+
     private async Task AddArticle(EditContext context)
     {
         var formIsValid = context.Validate();
 
-        if (!formIsValid)
+        if (!formIsValid || _isBusy)
             return;
 
-        await Http.PostAsJsonAsync("api/Articles", _article);
+        _isBusy = true;
+        var newArticle = _article;
         _article.ArticleNumber = string.Empty;
         _article.SalesPrice = 0;
+        await Http.PostAsJsonAsync("api/Articles", newArticle);
         await ReloadList();
+        _isBusy = false;
     }
 
     private async Task ReloadList()

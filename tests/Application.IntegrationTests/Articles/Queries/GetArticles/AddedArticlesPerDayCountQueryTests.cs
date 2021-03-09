@@ -23,28 +23,36 @@ namespace AmazingArticles.Application.IntegrationTests.Articles.Queries.GetArtic
                     Id = Guid.NewGuid(),
                     Created = new DateTime(2021, 03, 08),
                     SalesPrice = 400,
-                    ArticleNumber = "Foo1"
+                    ArticleNumber = "Foo1",
+                    Sold = true,
+                    SoldAt = new DateTime(2021, 03, 08)
                 },
                 new Article()
                 {
                     Id = Guid.NewGuid(),
                     Created = new DateTime(2021, 03, 08),
                     SalesPrice = 300,
-                    ArticleNumber = "Foo2"
+                    ArticleNumber = "Foo2",
+                    Sold = true,
+                    SoldAt = new DateTime(2021, 03, 08)
                 },
                 new Article()
                 {
                     Id = Guid.NewGuid(),
                     Created = new DateTime(2021, 03, 08),
                     SalesPrice = 400,
-                    ArticleNumber = "Foo4"
+                    ArticleNumber = "Foo4",
+                    Sold = true,
+                    SoldAt = new DateTime(2021, 03, 08)
                 },
                 new Article()
                 {
                     Id = Guid.NewGuid(),
                     Created = new DateTime(2021, 03, 07),
                     SalesPrice = 400,
-                    ArticleNumber = "Foo4"
+                    ArticleNumber = "Foo4",
+                    Sold = true,
+                    SoldAt = new DateTime(2021, 03, 07)
                 }
             };
 
@@ -52,7 +60,7 @@ namespace AmazingArticles.Application.IntegrationTests.Articles.Queries.GetArtic
                 AddArticle(article);
             
 
-            var query = new AddedArticlesPerDayCountQuery();
+            var query = new SoldArticlesPerDayCountQuery();
             var result = await SendAsync(query);
             result.Count().Should().BeGreaterThan(0);
             result[new DateTime(2021, 03, 08)].Should().Be(3);

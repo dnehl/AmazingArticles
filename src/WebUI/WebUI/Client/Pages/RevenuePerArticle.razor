@@ -1,10 +1,10 @@
-﻿@page "/articlesPerDay"
+﻿@page "/revenuePerArticle"
 @using AmazingArticles.Domain.Entities
 @inject HttpClient Http
 
-<h1>Articles sold per day</h1>
+<h1>Revenues depending on article number</h1>
 
-<p>This page shows all articles which where added at a specific day.</p>
+<p>This page shows all revenues per article.</p>
 
 @if (_articles == null)
 {
@@ -15,15 +15,15 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Article soled</th>
+                <th>Article number</th>
+                <th>Revenue (€)</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var article in _articles)
             {
                 <tr>
-                    <td>@article.Key.ToShortDateString()</td>
+                    <td>@article.Key</td>
                     <td>@article.Value</td>
                 </tr>
             }
@@ -32,11 +32,11 @@ else
 }
 
 @code {
-    private Dictionary<DateTime, int> _articles;
+    private Dictionary<string, double> _articles;
 
     protected override async Task OnInitializedAsync()
     {
-        _articles = await Http.GetFromJsonAsync<Dictionary<DateTime, int>>("api/Articles/GetArticleCountPerDay");
+        _articles = await Http.GetFromJsonAsync<Dictionary<string, double>>("/api/Articles/TotalRevenuePerArticleNumber");
     }
 
 }

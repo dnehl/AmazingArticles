@@ -25,28 +25,36 @@ namespace AmazingArticles.Application.IntegrationTests.Articles.Queries.Revenues
                     Id = Guid.NewGuid(),
                     Created = new DateTime(2021, 03, 08),
                     SalesPrice = 400,
-                    ArticleNumber = "Foo1"
+                    ArticleNumber = "Foo1",
+                    Sold = true,
+                    SoldAt = new DateTime(2021, 03, 08)
                 },
                 new Article()
                 {
                     Id = Guid.NewGuid(),
                     Created = new DateTime(2021, 03, 08),
                     SalesPrice = 300,
-                    ArticleNumber = "Foo2"
+                    ArticleNumber = "Foo2",
+                    Sold = true,
+                    SoldAt = new DateTime(2021, 03, 08)
                 },
                 new Article()
                 {
                     Id = Guid.NewGuid(),
                     Created = new DateTime(2021, 03, 08),
                     SalesPrice = 400,
-                    ArticleNumber = "Foo4"
+                    ArticleNumber = "Foo4",
+                    Sold = true,
+                    SoldAt = new DateTime(2021, 03, 08)
                 },
                 new Article()
                 {
                     Id = Guid.NewGuid(),
                     Created = new DateTime(2021, 03, 07),
                     SalesPrice = 400,
-                    ArticleNumber = "Foo4"
+                    ArticleNumber = "Foo4",
+                    Sold = true,
+                    SoldAt = new DateTime(2021, 03, 07)
                 }
             };
 
