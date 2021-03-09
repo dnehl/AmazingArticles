@@ -12,7 +12,14 @@
 <h1>Amazing articles</h1>
 
 <p>Hello and welcome to the amazing articles service powered by Dominik Nehl.</p>
-<p>You can play around with the Sites, which are presented in the Nav-bar <br /> or if you are a real pro you can also try the awesome swagger UI (<a href="@_swaggerUrl" target="_blank" class="ml-md-auto">Swagger</a>)).</p>
+<p>
+    You can play around with the Sites, which are presented in the Nav-bar <br />
+
+    @if (_isLocalHost)
+    {
+    <p> or if you are a real pro you can also try the awesome swagger UI (<a href="@_swaggerUrl" target="_blank" class="ml-md-auto">Swagger</a>)). </p>
+    }
+</p>
 
 @if (_articles == null || _articlesLoading)
 {
@@ -76,7 +83,7 @@ else
     {
         var baseAddress = Http.BaseAddress;
         _swaggerUrl = $"{baseAddress}swagger";
-        _isLocalHost = baseAddress.AbsoluteUri.Contains("localhost");
+        _isLocalHost = !baseAddress.AbsoluteUri.Contains("azure");
 
         await ReloadList();
     }
@@ -135,13 +142,20 @@ else
         if (!formIsValid || _isBusy)
             return;
 
-        _isBusy = true;
-        var newArticle = _article;
-        _article.ArticleNumber = string.Empty;
-        _article.SalesPrice = 0;
-        await Http.PostAsJsonAsync("api/Articles", newArticle);
-        await ReloadList();
-        _isBusy = false;
+       try
+       {
+            _isBusy = true;
+            var newArticle = _article;
+                    await Http.PostAsJsonAsync("api/Articles", newArticle);
+            _article.ArticleNumber = string.Empty;
+            _article.SalesPrice = 0;
+            await ReloadList();
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+
     }
 
     private async Task ReloadList()
