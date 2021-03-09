@@ -14,7 +14,7 @@
 <p>Hello and welcome to the amazing articles service powered by Dominik Nehl.</p>
 <p>You can play around with the Sites, which are presented in the Nav-bar <br /> or if you are a real pro you can also try the awesome swagger UI (<a href="@_swaggerUrl" target="_blank" class="ml-md-auto">Swagger</a>)).</p>
 
-@if (_articles == null)
+@if (_articles == null || _articlesLoading)
 {
     <p><em>Loading...</em></p>
 }
@@ -69,12 +69,15 @@ else
     private List<Article> _articles;
     private readonly ArticleModel _article = new();
     private bool _isBusy;
-
+    private bool _articlesLoading;
+    private bool _isLocalHost;
 
     protected override async Task OnInitializedAsync()
     {
         var baseAddress = Http.BaseAddress;
         _swaggerUrl = $"{baseAddress}swagger";
+        _isLocalHost = baseAddress.AbsoluteUri.Contains("localhost");
+
         await ReloadList();
     }
 
@@ -143,10 +146,12 @@ else
 
     private async Task ReloadList()
     {
+        _articlesLoading = true;
         _articles = new List<Article>();
         var newList = await Http.GetFromJsonAsync<List<Article>>("api/Articles");
 
         _articles = newList;
+        _articlesLoading = false;
     }
 
 }
